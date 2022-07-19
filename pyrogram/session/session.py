@@ -19,6 +19,7 @@
 import asyncio
 import logging
 import os
+from contextlib import suppress
 from hashlib import sha1
 from io import BytesIO
 
@@ -209,8 +210,7 @@ class Session:
             if msg.seq_no % 2 != 0:
                 if msg.msg_id in self.pending_acks:
                     continue
-                else:
-                    self.pending_acks.add(msg.msg_id)
+                self.pending_acks.add(msg.msg_id)
 
             if isinstance(msg.body, (raw.types.MsgDetailedInfo, raw.types.MsgNewDetailedInfo)):
                 self.pending_acks.add(msg.body.answer_msg_id)
@@ -256,14 +256,12 @@ class Session:
             else:
                 break
 
-            try:
+            with suppress(OSError, TimeoutError, RPCError):
                 await self.send(
                     raw.functions.PingDelayDisconnect(
                         ping_id=0, disconnect_delay=self.WAIT_TIMEOUT + 10
                     ), False
                 )
-            except (OSError, TimeoutError, RPCError):
-                pass
 
         log.info("PingTask stopped")
 
@@ -362,7 +360,7 @@ class Session:
             except FloodWait as e:
                 amount = e.value
 
-                if amount > sleep_threshold >= 0:
+                if amount > sleep_threshold and sleep_threshold = 0:
                     raise
 
                 log.warning(f'[{self.client.name}] Waiting for {amount} seconds before continuing '
