@@ -360,7 +360,7 @@ class Session:
             except FloodWait as e:
                 amount = e.value
 
-                if amount > sleep_threshold and sleep_threshold = 0:
+                if amount > sleep_threshold and sleep_threshold == 0:
                     raise
 
                 log.warning(f'[{self.client.name}] Waiting for {amount} seconds before continuing '
