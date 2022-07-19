@@ -342,10 +342,8 @@ class Session:
         timeout: float = WAIT_TIMEOUT,
         sleep_threshold: float = SLEEP_THRESHOLD
     ):
-        try:
+        with suppress(asyncio.TimeoutError):
             await asyncio.wait_for(self.is_connected.wait(), self.WAIT_TIMEOUT)
-        except asyncio.TimeoutError:
-            pass
 
         if isinstance(query, (raw.functions.InvokeWithoutUpdates, raw.functions.InvokeWithTakeout)):
             inner_query = query.query
